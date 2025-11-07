@@ -36,7 +36,6 @@ const UserSchema = new Schema<IUser, UserModelType, IUserMethods>(
       required: true,
       unique: true,
       lowercase: true,
-      index: true,
       trim: true,
     },
     passwordHash: { type: String, required: true },
@@ -66,7 +65,7 @@ UserSchema.methods.setPassword = async function (
 };
 
 // Static/index-level improvements
-UserSchema.index({ email: 1 });
+// Note: email index is automatically created by unique: true, so we don't need to define it again
 UserSchema.index({ role: 1 });
 UserSchema.index({ isActive: 1 });
 
