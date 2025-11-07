@@ -1,5 +1,5 @@
 import crypto from "crypto";
-import { Otp } from "../models/Otp";
+import { Otp } from "../models/opt.model";
 import { hash as bcryptHash, compare as bcryptCompare } from "bcrypt";
 
 export async function createAndSendOtp(email: string, purpose: "signup" | "forgot", sendFn: (code:string)=>Promise<void>) {
