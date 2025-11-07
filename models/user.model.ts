@@ -1,12 +1,6 @@
-// models/user.model.ts
 import mongoose, { Schema, model } from "mongoose";
 import bcrypt from "bcrypt";
-import {
-  PROVIDER_TYPE,
-  ProviderType,
-  Role,
-  ROLES,
-} from "@/constants/shakib/user.const";
+import { PROVIDER_TYPE, ProviderType, Role, ROLES } from "@/constants/shakib/user.const";
 
 export interface IUser {
   email: string;
@@ -34,9 +28,8 @@ const UserSchema = new Schema<IUser, UserModelType, IUserMethods>(
     email: {
       type: String,
       required: true,
-      unique: true,
+      unique: true, // unique already creates an index
       lowercase: true,
-      index: true,
       trim: true,
     },
     passwordHash: { type: String, required: true },
@@ -63,13 +56,11 @@ UserSchema.methods.setPassword = async function (
   this.passwordHash = hash;
 };
 
-// Static/index-level improvements
-UserSchema.index({ email: 1 });
+// Additional indexes
 UserSchema.index({ role: 1 });
 UserSchema.index({ isActive: 1 });
 
 export const UserModel: UserModelType =
-  (mongoose.models.User as UserModelType) ||
-  model<IUser, UserModelType>("User", UserSchema);
+  (mongoose.models.User as UserModelType) || model<IUser, UserModelType>("User", UserSchema);
 
 export default UserModel;
