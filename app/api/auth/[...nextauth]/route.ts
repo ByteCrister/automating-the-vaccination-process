@@ -1,0 +1,88 @@
+// [...nextauth]/route.ts
+import NextAuth, { NextAuthOptions } from "next-auth";
+import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
+import { User } from "@/models/User";
+import connectDb from "@/lib/db";
+import { Types } from "mongoose";
+
+export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
+  // debug: true,
+  providers: [
+    CredentialsProvider({
+      name: "Credentials",
+      credentials: {
+        email: { label: "Email", type: "text" },
+        password: { label: "Password", type: "password" },
+      },
+      async authorize(credentials) {
+        await connectDb();
+        if (!credentials?.email || !credentials?.password) return null;
+
+        const user = await User.findOne({ email: credentials.email.toLowerCase() });
+        if (!user) return null;
+
+        const ok = await user.comparePassword!(credentials.password);
+        if (!ok) return null;
+
+        return {
+          id: (user._id as Types.ObjectId).toString(),
+          email: user.email,
+          name: user.name,
+        };
+      },
+    }),
+
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID!,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+    }),
+  ],
+
+  session: { strategy: "jwt" },
+
+  callbacks: {
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        await connectDb();
+
+        const existingUser = await User.findOne({ email: user.email });
+
+        if (!existingUser) {
+          console.warn("❌ Google user not found in DB:", user.email);
+          return false; // ❌ Reject sign-in
+        }
+
+        console.log("✅ Google user exists in DB:", user.email);
+      }
+      return true;
+    },
+
+    async jwt({ token, user }) {
+      if (user) token.sub = user.id || token.sub;
+      return token;
+    },
+
+    async session({ session, token }) {
+      if (session.user && token.sub) {
+        session.user.id = token.sub;
+      }
+      return session;
+    },
+
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith(baseUrl)) return url;
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      return baseUrl + "/";
+    },
+  },
+
+  pages: {
+    signIn: "/signin",
+    error: "/auth/error",
+  },
+};
+
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
