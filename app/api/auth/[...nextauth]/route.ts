@@ -2,9 +2,9 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import { User } from "@/models/User";
 import connectDb from "@/lib/db";
 import { Types } from "mongoose";
+import UserModel from "@/models/user.model";
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -20,7 +20,7 @@ export const authOptions: NextAuthOptions = {
         await connectDb();
         if (!credentials?.email || !credentials?.password) return null;
 
-        const user = await User.findOne({ email: credentials.email.toLowerCase() });
+        const user = await UserModel.findOne({ email: credentials.email.toLowerCase() });
         if (!user) return null;
 
         const ok = await user.comparePassword!(credentials.password);
@@ -29,7 +29,7 @@ export const authOptions: NextAuthOptions = {
         return {
           id: (user._id as Types.ObjectId).toString(),
           email: user.email,
-          name: user.name,
+          name: user.fullName,
         };
       },
     }),
@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
       if (account?.provider === "google") {
         await connectDb();
 
-        const existingUser = await User.findOne({ email: user.email });
+        const existingUser = await UserModel.findOne({ email: user.email });
 
         if (!existingUser) {
           console.warn("❌ Google user not found in DB:", user.email);

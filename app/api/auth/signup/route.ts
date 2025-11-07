@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import connectDb from "@/lib/db";
-import { User } from "@/models/User";
+import { User } from "@/models/user.model";
 import { verifyOtp } from "@/lib/otp";
 
 export async function POST(req: Request) {
