@@ -23,7 +23,7 @@ export const authOptions: NextAuthOptions = {
         const user = await UserModel.findOne({ email: credentials.email.toLowerCase() });
         if (!user) return null;
 
-        const ok = await user.comparePassword!(credentials.password);
+        const ok = await user.verifyPassword!(credentials.password);
         if (!ok) return null;
 
         return {
@@ -51,7 +51,7 @@ export const authOptions: NextAuthOptions = {
 
         if (!existingUser) {
           console.warn("❌ Google user not found in DB:", user.email);
-          return false; // ❌ Reject sign-in
+          return false;
         }
 
         console.log("✅ Google user exists in DB:", user.email);
@@ -72,10 +72,9 @@ export const authOptions: NextAuthOptions = {
     },
 
     async redirect({ url, baseUrl }) {
-      if (url.startsWith(baseUrl)) return url;
-      if (url.startsWith("/")) return `${baseUrl}${url}`;
-      return baseUrl + "/";
+      return url.startsWith("/") ? `${baseUrl}${url}` : url;
     },
+
   },
 
   pages: {

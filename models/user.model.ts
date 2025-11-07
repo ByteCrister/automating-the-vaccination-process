@@ -50,10 +50,8 @@ const UserSchema = new Schema<IUser, UserModelType, IUserMethods>(
 );
 
 // Instance methods
-UserSchema.methods.verifyPassword = async function (
-  this: IUser & { passwordHash: string },
-  plain: string
-) {
+UserSchema.methods.verifyPassword = async function (plain: string) {
+  if (!this.passwordHash) return false;
   return bcrypt.compare(plain, this.passwordHash);
 };
 
