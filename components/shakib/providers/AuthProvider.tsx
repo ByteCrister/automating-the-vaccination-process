@@ -24,8 +24,8 @@ export default function AuthProvider({ children }: Props): JSX.Element {
                 controller.abort();
             }
         };
-        // dependencies intentionally limited to runtime state only
-    }, [user, loading]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return <>{children}</>;
 }
