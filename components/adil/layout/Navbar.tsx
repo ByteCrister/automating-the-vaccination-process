@@ -2,16 +2,19 @@
 
 import * as React from 'react';
 import Link from 'next/link';
-import { Menu, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { LuMenu, LuX, LuHouse, LuUserPlus, LuDownload, LuFileText, LuLogIn } from 'react-icons/lu';
 import { Container } from '@/components/ui/adil/Container';
 import { Button } from '@/components/ui/adil/Button';
 import { cn } from '@/lib/utils';
+import { signIn } from 'next-auth/react';
 
 interface NavbarProps {
   logo?: string;
   navItems?: Array<{
     label: string;
     href: string;
+    icon?: React.ComponentType<{ className?: string }>;
     children?: Array<{ label: string; href: string }>;
   }>;
   ctaButton?: {
@@ -51,34 +54,37 @@ export function Navbar({ logo = 'VaxEPI', navItems = [], ctaButton }: NavbarProp
 
   // Default nav items for the lower nav
   const defaultNavItems = [
-    { label: 'home', href: '/' },
-    { label: 'register', href: '/register' },
-    { label: 'vaccine card download', href: '/vaccine-card' },
-    { label: 'vaccine certificate download', href: '/certificate' },
-    { label: 'login', href: '/login' },
+    { label: 'home', href: '/', icon: LuHouse },
+    { label: 'register', href: '/register', icon: LuUserPlus },
+    { label: 'vaccine card download', href: '/vaccine-card', icon: LuDownload },
+    { label: 'vaccine certificate download', href: '/certificate', icon: LuFileText },
+    { label: 'login', href: '/signin', icon: LuLogIn },
   ];
 
   const navItemsToUse = navItems.length > 0 ? navItems : defaultNavItems;
 
   return (
-    <header
+    <motion.header
       className={cn(
         'fixed top-0 left-0 right-0 z-50 transition-all duration-300',
         isScrolled
           ? 'bg-white/95 backdrop-blur-md shadow-md'
           : 'bg-white'
       )}
+      initial={{ y: -100, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.6 }}
     >
       {/* Upper Header - 3 Images */}
       {!hideUpperNav && (
-        <div className="bg-blue-50 border-b transition-all duration-300">
+        <div className="bg-green-50 border-b transition-all duration-300">
           <Container>
-            <div className="flex justify-between items-center py-3">
+            <div className="flex justify-between items-center py-2">
               <div className="flex justify-center">
                 <img
                   src="/adil/logo_1.svg"
                   alt="Partner Logo 1"
-                  className="h-12 w-auto object-contain"
+                  className="h-10 w-auto object-contain"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                   }}
@@ -88,7 +94,7 @@ export function Navbar({ logo = 'VaxEPI', navItems = [], ctaButton }: NavbarProp
                 <img
                   src="/adil/logo_2.png"
                   alt="Partner Logo 2"
-                  className="h-12 w-auto object-contain"
+                  className="h-10 w-auto object-contain"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                   }}
@@ -98,7 +104,7 @@ export function Navbar({ logo = 'VaxEPI', navItems = [], ctaButton }: NavbarProp
                 <img
                   src="/adil/logo_3.png"
                   alt="Partner Logo 3"
-                  className="h-12 w-auto object-contain"
+                  className="h-10 w-auto object-contain"
                   onError={(e) => {
                     e.currentTarget.style.display = 'none';
                   }}
@@ -110,12 +116,12 @@ export function Navbar({ logo = 'VaxEPI', navItems = [], ctaButton }: NavbarProp
       )}
 
       {/* Lower Nav */}
-      <Container>
-        <nav className="flex items-center justify-between h-16 md:h-20" aria-label="Main navigation">
+      <Container className="bg-white/20 backdrop-blur-lg">
+        <nav className="flex items-center justify-between h-12 md:h-16" aria-label="Main navigation">
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center gap-3 font-bold text-xl md:text-2xl text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md"
+            className="flex items-center gap-3 font-bold text-xl md:text-2xl text-gray-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 rounded-md"
             aria-label="VaxEPI Home"
           >
             <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
@@ -126,18 +132,37 @@ export function Navbar({ logo = 'VaxEPI', navItems = [], ctaButton }: NavbarProp
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-1">
-            {navItemsToUse.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  'px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-md transition-colors',
-                  'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500'
-                )}
-              >
-                {item.label}
-              </Link>
-            ))}
+            {navItemsToUse.map((item) => {
+              const IconComponent = item.icon;
+              if (item.label === 'login') {
+                return (
+                  <button
+                    key={item.href}
+                    onClick={() => signIn()}
+                    className={cn(
+                      'flex items-center gap-2 px-4 py-2 text-lg font-medium text-gray-700 hover:text-green-600 hover:bg-gray-50 rounded-md transition-colors',
+                      'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500'
+                    )}
+                  >
+                    {IconComponent && <IconComponent className="w-4 h-4" />}
+                    {item.label}
+                  </button>
+                );
+              }
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    'flex items-center gap-2 px-4 py-2 text-lg font-medium text-gray-700 hover:text-green-600 hover:bg-gray-50 rounded-md transition-colors',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500'
+                  )}
+                >
+                  {IconComponent && <IconComponent className="w-4 h-4" />}
+                  {item.label}
+                </Link>
+              );
+            })}
           </div>
 
           {/* CTA & Mobile Menu Button */}
@@ -146,7 +171,7 @@ export function Navbar({ logo = 'VaxEPI', navItems = [], ctaButton }: NavbarProp
               <Button
                 href={ctaButton.href}
                 variant="primary"
-                size="sm"
+                size="md"
                 className="hidden md:inline-flex"
               >
                 {ctaButton.label}
@@ -154,55 +179,116 @@ export function Navbar({ logo = 'VaxEPI', navItems = [], ctaButton }: NavbarProp
             )}
 
             {/* Mobile Menu Toggle */}
-            <button
+            <motion.button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="md:hidden p-2 text-gray-700 hover:bg-gray-100 rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
               aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
               aria-expanded={isMobileMenuOpen}
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
             >
-              {isMobileMenuOpen ? (
-                <X className="w-6 h-6" />
-              ) : (
-                <Menu className="w-6 h-6" />
-              )}
-            </button>
+              <AnimatePresence mode="wait">
+                {isMobileMenuOpen ? (
+                  <motion.div
+                    key="close"
+                    initial={{ rotate: -90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: 90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <LuX className="w-6 h-6" />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="open"
+                    initial={{ rotate: 90, opacity: 0 }}
+                    animate={{ rotate: 0, opacity: 1 }}
+                    exit={{ rotate: -90, opacity: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    <LuMenu className="w-6 h-6" />
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </motion.button>
           </div>
         </nav>
       </Container>
 
       {/* Mobile Menu */}
-      {isMobileMenuOpen && (
-        <div className="md:hidden fixed inset-0 top-32 bg-white z-40 overflow-y-auto">
-          <Container className="py-6">
-            <div className="space-y-2">
-              {navItemsToUse.map((item) => (
-                <div key={item.href}>
-                  <Link
-                    href={item.href}
-                    className="block px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-blue-600 rounded-md transition-colors"
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            className="md:hidden fixed inset-0 top-32 bg-white z-40 overflow-y-auto"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Container className="py-6">
+              <motion.div
+                className="space-y-2"
+                initial={{ x: -20, opacity: 0 }}
+                animate={{ x: 0, opacity: 1 }}
+                transition={{ duration: 0.2, delay: 0.1 }}
+              >
+                {navItemsToUse.map((item, index) => {
+                  const IconComponent = item.icon;
+                  return (
+                    <motion.div
+                      key={item.href}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      whileHover={{ scale: 1.05, x: 5 }}
+                    >
+                      {item.label === 'login' ? (
+                        <button
+                          onClick={() => {
+                            signIn();
+                            setIsMobileMenuOpen(false);
+                          }}
+                          className="flex items-center gap-3 px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-green-600 rounded-md transition-colors"
+                        >
+                          {IconComponent && <IconComponent className="w-5 h-5" />}
+                          {item.label}
+                        </button>
+                      ) : (
+                        <Link
+                          href={item.href}
+                          className="flex items-center gap-3 px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-green-600 rounded-md transition-colors"
+                          onClick={() => setIsMobileMenuOpen(false)}
+                        >
+                          {IconComponent && <IconComponent className="w-5 h-5" />}
+                          {item.label}
+                        </Link>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+
+              {ctaButton && (
+                <motion.div
+                  className="mt-6"
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ duration: 0.3, delay: 0.4 }}
+                >
+                  <Button
+                    href={ctaButton.href}
+                    variant="primary"
+                    className="w-full"
                     onClick={() => setIsMobileMenuOpen(false)}
                   >
-                    {item.label}
-                  </Link>
-                </div>
-              ))}
-            </div>
-
-            {ctaButton && (
-              <div className="mt-6">
-                <Button
-                  href={ctaButton.href}
-                  variant="primary"
-                  className="w-full"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  {ctaButton.label}
-                </Button>
-              </div>
-            )}
-          </Container>
-        </div>
-      )}
-    </header>
+                    {ctaButton.label}
+                  </Button>
+                </motion.div>
+              )}
+            </Container>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.header>
   );
 }

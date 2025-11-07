@@ -1,0 +1,11 @@
+- [ ] Create dashboard pages: overview, registration, vaccine-record, digital-card, appointments, notifications, help
+- [ ] Build dashboard components: Header, Sidebar, ContentGrid, SummaryCard, QuickActions, NotificationList, etc.
+- [ ] Set up MSW mock API with handlers for /api/me, /api/appointments, /api/centers, /api/vaccines, /api/notifications
+- [ ] Create dashboard-specific types and constants
+- [ ] Update layout for dashboard navigation
+- [ ] Add inline SVG icons (12 icons: profile, nid, calendar, map, document, download, qr, bell, settings, logout, check, chevron)
+- [ ] Create design tokens and update Tailwind config
+- [ ] Add accessibility features and keyboard navigation
+- [ ] Install MSW and other dependencies if needed
+- [ ] Test dashboard flows end-to-end
+- [ ] Add unit tests and accessibility checks

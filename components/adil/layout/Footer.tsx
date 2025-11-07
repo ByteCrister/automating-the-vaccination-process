@@ -1,5 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 import { Facebook, Twitter, Linkedin, Mail, Phone, MapPin } from 'lucide-react';
+import { FcAssistant } from "react-icons/fc";
+import { motion } from 'framer-motion';
 import { Container } from '@/components/ui/adil/Container';
 
 interface FooterProps {
@@ -30,16 +34,27 @@ export function Footer({ columns = [], socialLinks = [], contactInfo }: FooterPr
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-gray-900 text-gray-300">
+    <motion.footer
+      className="bg-gray-900 text-gray-300"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+    >
       {/* Main Footer Content */}
       <Container className="py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-12">
           {/* Left */}
-          <div>
+          <motion.div
+            initial={{ x: -50, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            viewport={{ once: true }}
+          >
             <h3 className="font-semibold text-white text-lg mb-4">For any Assistance Regarding Registration:</h3>
             <div className="flex gap-4">
               <div>
-                <img src="/adil/hello.png" alt="VaxEPI" width={160} height={40} className="mb-4" />
+                <FcAssistant className="w-18 h-18 mb-4" />
               </div>
               <div>
                 <ul className="space-y-3">
@@ -67,10 +82,16 @@ export function Footer({ columns = [], socialLinks = [], contactInfo }: FooterPr
                 </ul>
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Mid */}
-          <div className="space-y-4">
+          <motion.div
+            className="space-y-4"
+            initial={{ y: 30, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 bg-gradient-to-br from-blue-600 to-blue-700 rounded-lg flex items-center justify-center">
                 <span className="text-white text-base font-extrabold">V</span>
@@ -84,59 +105,111 @@ export function Footer({ columns = [], socialLinks = [], contactInfo }: FooterPr
             {/* Social Links */}
             {socialLinks.length > 0 && (
               <div className="flex gap-3 pt-2">
-                {socialLinks.map((social) => {
+                {socialLinks.map((social, index) => {
                   const Icon = iconMap[social.icon];
                   return (
-                    <a
+                    <motion.a
                       key={social.name}
                       href={social.href}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="w-10 h-10 bg-gray-800 hover:bg-blue-600 rounded-lg flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                      className="w-10 h-10 bg-gray-800 hover:bg-green-600 rounded-lg flex items-center justify-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
                       aria-label={social.name}
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      transition={{ duration: 0.4, delay: 0.6 + index * 0.1 }}
+                      viewport={{ once: true }}
+                      whileHover={{ scale: 1.1 }}
                     >
                       <Icon className="w-5 h-5" />
-                    </a>
+                    </motion.a>
                   );
                 })}
               </div>
             )}
-          </div>
+          </motion.div>
 
           {/* Right */}
-          <div>
+          <motion.div
+            initial={{ x: 50, opacity: 0 }}
+            whileInView={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.6 }}
+            viewport={{ once: true }}
+          >
             <h3 className="font-semibold text-white text-lg mb-4">Partner Organizations</h3>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
-                <img src="/adil/footerImg/mis_logo 1.png" alt="MIS" width={60} height={40} />
-                <img src="/adil/footerImg/gavi.png" alt="GAVI" width={80} height={40} />
-                <img src="/adil/footerImg/unicef_logo.png" alt="UNICEF" width={80} height={40} />
-                <img src="/adil/footerImg/WHO-11.svg" alt="WHO" width={80} height={40} />
+                <motion.img
+                  src="/adil/footerImg/mis_logo 1.png"
+                  alt="MIS"
+                  width={60}
+                  height={40}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.8 }}
+                  viewport={{ once: true }}
+                />
+                <motion.img
+                  src="/adil/footerImg/gavi.png"
+                  alt="GAVI"
+                  width={80}
+                  height={40}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 0.9 }}
+                  viewport={{ once: true }}
+                />
+                <motion.img
+                  src="/adil/footerImg/unicef_logo.png"
+                  alt="UNICEF"
+                  width={80}
+                  height={40}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 1.0 }}
+                  viewport={{ once: true }}
+                />
+                <motion.img
+                  src="/adil/footerImg/WHO-11.svg"
+                  alt="WHO"
+                  width={80}
+                  height={40}
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
+                  transition={{ duration: 0.4, delay: 1.1 }}
+                  viewport={{ once: true }}
+                />
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </Container>
 
       {/* Bottom Bar */}
-      <div className="border-t border-gray-800">
+      <motion.div
+        className="border-t border-gray-800"
+        initial={{ opacity: 0 }}
+        whileInView={{ opacity: 1 }}
+        transition={{ duration: 0.6, delay: 1.2 }}
+        viewport={{ once: true }}
+      >
         <Container className="py-6">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4 text-sm">
             <p>© {currentYear} VaxEPI. All rights reserved.</p>
             <div className="flex gap-6">
-              <Link href="/privacy" className="hover:text-blue-400 transition-colors">
+              <Link href="/privacy" className="hover:text-green-400 transition-colors">
                 Privacy Policy
               </Link>
-              <Link href="/terms" className="hover:text-blue-400 transition-colors">
+              <Link href="/terms" className="hover:text-green-400 transition-colors">
                 Terms of Service
               </Link>
-              <Link href="/accessibility" className="hover:text-blue-400 transition-colors">
+              <Link href="/accessibility" className="hover:text-green-400 transition-colors">
                 Accessibility
               </Link>
             </div>
           </div>
         </Container>
-      </div>
-    </footer>
+      </motion.div>
+    </motion.footer>
   );
 }

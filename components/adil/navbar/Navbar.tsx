@@ -1,8 +1,9 @@
 // components/navbar/Navbar.tsx
+"use client";
 import React from "react";
 import Link from "next/link";
-import Logo from "../../ui/adil/Logo";
-import NavClient from "./Navbar.client"; // client interactive part
+import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export type NavLink = { label: string; href: string; external?: boolean };
 
@@ -13,17 +14,16 @@ type Props = {
 };
 
 export default function Navbar({ links = [], locale = "bn", user = null }: Props) {
-  // Server component: render stable HTML, minimal logic here
+  const router = useRouter();
+
+  const handleLoginClick = () => {
+    router.push("/signin");
+  };
+
   return (
     <header className="bg-white border-b" role="banner">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <div className="flex items-center gap-4">
-            <Link href="/" aria-label="Home" className="inline-flex items-center">
-              <Logo className="h-8 w-auto" />
-            </Link>
-          </div>
-
           <nav className="hidden md:flex md:items-center md:gap-6" aria-label="Primary">
             {links.map((l) => (
               <Link key={l.href} href={l.href} className="text-sm font-medium text-slate-700 hover:text-slate-900">
@@ -32,9 +32,24 @@ export default function Navbar({ links = [], locale = "bn", user = null }: Props
             ))}
           </nav>
 
-          {/* Client-only interactive area: language, auth, mobile toggle */}
-          <div className="flex items-center">
-            <NavClient initialLocale={locale} links={links} user={user} />
+          <div className="flex items-center gap-4">
+            {!user ? (
+              <button 
+                onClick={handleLoginClick}
+                className="px-4 py-2 rounded bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium transition-colors"
+              >
+                Login
+              </button>
+            ) : (
+              <div className="flex items-center gap-2">
+                {user.image ? (
+                  <Image src={user.image} alt={user.name ?? "avatar"} width={28} height={28} className="rounded-full" />
+                ) : (
+                  <div className="h-7 w-7 rounded-full bg-slate-200" />
+                )}
+                <span className="text-sm text-slate-700">{user.name ?? user.email}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

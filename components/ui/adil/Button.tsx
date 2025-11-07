@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Link from 'next/link';
+import { motion } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -17,9 +18,9 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
     
     const variants = {
-      primary: 'bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500 shadow-md hover:shadow-lg',
+      primary: 'bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-500 shadow-md hover:shadow-lg',
       secondary: 'bg-gray-800 text-white hover:bg-gray-900 focus-visible:ring-gray-500 shadow-md hover:shadow-lg',
-      outline: 'border-2 border-blue-600 text-blue-600 hover:bg-blue-50 focus-visible:ring-blue-500',
+      outline: 'border-2 border-green-600 text-green-600 hover:bg-green-50 focus-visible:ring-green-500',
       ghost: 'text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-400',
     };
     
@@ -33,16 +34,24 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 
     if (href) {
       return (
-        <Link href={href} className={classes}>
-          {children}
-        </Link>
+        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+          <Link href={href} className={classes}>
+            {children}
+          </Link>
+        </motion.div>
       );
     }
 
     return (
-      <button ref={ref} className={classes} {...props}>
+      <motion.button
+        ref={ref}
+        className={classes}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        {...(props as any)}
+      >
         {children}
-      </button>
+      </motion.button>
     );
   }
 );

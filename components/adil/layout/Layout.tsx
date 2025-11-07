@@ -1,7 +1,7 @@
 // components/layout/Layout.tsx
 import React from "react";
-import Navbar from "../navbar/Navbar";
-import Footer from "../footer/Footer";
+import { Navbar } from "./Navbar";
+import { Footer } from "./Footer";
 
 type Props = {
   children: React.ReactNode;
@@ -15,21 +15,13 @@ export default function Layout({ children, links = [], user = null, locale = "bn
     <div className="min-h-screen flex flex-col">
       <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed top-4 left-4 z-50 bg-white p-2 rounded shadow">Skip to content</a>
 
-      <Navbar links={links} user={user} locale={locale} />
+      <Navbar />
 
       <main id="main-content" className="flex-1 container mx-auto px-4 py-8">
         {children}
       </main>
 
-      <Footer
-        contact={{ email: "vaxepi@mis.dghs.gov.bd" }}
-        quickLinks={[
-          { label: "Home", href: "/" },
-          { label: "About", href: "/about" },
-          { label: "EPI Card", href: "/card" },
-        ]}
-        lastUpdated={new Date().toISOString().split("T")[0]}
-      />
+      <Footer />
     </div>
   );
 }

@@ -32,15 +32,6 @@ export default function NavClient({ initialLocale, links, user }: Props) {
 
   return (
     <div className="flex items-center gap-3">
-      <select
-        value={locale}
-        onChange={(e) => changeLocale(e.target.value as "bn" | "en")}
-        aria-label="Language"
-        className="text-sm border rounded px-2 py-1"
-      >
-        <option value="bn">বাংলা</option>
-        <option value="en">English</option>
-      </select>
 
       <div className="hidden md:block">
         {user ? (
@@ -53,7 +44,7 @@ export default function NavClient({ initialLocale, links, user }: Props) {
             <span className="text-sm text-slate-700">{user.name ?? user.email}</span>
           </div>
         ) : (
-          <Link href="/signin" className="px-3 py-1 rounded bg-blue-600 text-white text-sm">
+          <Link href="/signin" className="px-3 py-1 rounded bg-green-600 text-white text-sm">
             Sign in
           </Link>
         )}
@@ -65,7 +56,7 @@ export default function NavClient({ initialLocale, links, user }: Props) {
         onClick={toggleMenu}
         aria-expanded={open}
         aria-controls="mobile-menu"
-        className="md:hidden inline-flex items-center justify-center p-2 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+        className="md:hidden inline-flex items-center justify-center p-2 rounded focus:outline-none focus-visible:ring-2 focus-visible:ring-green-500"
       >
         <span className="sr-only">Open menu</span>
         <svg className="h-5 w-5 text-slate-700" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -106,11 +97,11 @@ export default function NavClient({ initialLocale, links, user }: Props) {
                   {user.image ? <img src={user.image} alt={user.name ?? "avatar"} className="h-10 w-10 rounded-full" /> : <div className="h-10 w-10 rounded-full bg-slate-200" />}
                   <div>
                     <div className="text-sm font-medium">{user.name ?? user.email}</div>
-                    <Link href="/profile" className="text-sm text-blue-600">Profile</Link>
+                    <Link href="/profile" className="text-sm text-green-600">Profile</Link>
                   </div>
                 </div>
               ) : (
-                <Link href="/signin" className="block mt-2 px-3 py-2 rounded bg-blue-600 text-white text-center">
+                <Link href="/signin" className="block mt-2 px-3 py-2 rounded bg-green-600 text-white text-center">
                   Sign in
                 </Link>
               )}

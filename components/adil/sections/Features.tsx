@@ -1,3 +1,6 @@
+'use client';
+
+import { motion } from 'framer-motion';
 import { Shield, Calendar, MapPin, Bell, FileText, Users } from 'lucide-react';
 import { Container } from '@/components/ui/adil/Container';
 
@@ -36,36 +39,87 @@ const features = [
 
 export function Features() {
   return (
-    <section className="py-16 md:py-24 bg-gray-50">
+    <motion.section
+      className="py-16 md:py-24 bg-gray-50"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      transition={{ duration: 0.6 }}
+      viewport={{ once: true }}
+    >
       <Container>
-        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4">
+        <motion.div
+          className="text-center max-w-3xl mx-auto mb-12 md:mb-16"
+          initial={{ y: 30, opacity: 0 }}
+          whileInView={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          viewport={{ once: true }}
+        >
+          <motion.h2
+            className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4"
+            initial={{ scale: 0.9, opacity: 0 }}
+            whileInView={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            viewport={{ once: true }}
+          >
             Everything You Need for Vaccination
-          </h2>
-          <p className="text-lg text-gray-600">
+          </motion.h2>
+          <motion.p
+            className="text-lg text-gray-600"
+            initial={{ y: 20, opacity: 0 }}
+            whileInView={{ y: 0, opacity: 1 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            viewport={{ once: true }}
+          >
             A comprehensive platform designed to make immunization simple, accessible, and stress-free.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {features.map((feature) => (
-            <div
+        <motion.div
+          className="grid md:grid-cols-2 lg:grid-cols-3 gap-8"
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          viewport={{ once: true }}
+        >
+          {features.map((feature, index) => (
+            <motion.div
               key={feature.title}
               className="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow"
+              initial={{ y: 50, opacity: 0 }}
+              whileInView={{ y: 0, opacity: 1 }}
+              transition={{ duration: 0.6, delay: 0.1 * index }}
+              viewport={{ once: true }}
+              whileHover={{ y: -5, scale: 1.02 }}
             >
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-4">
-                <feature.icon className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-semibold text-gray-900 mb-2">
+              <motion.div
+                className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-4"
+                whileHover={{ rotate: 10, scale: 1.1 }}
+                transition={{ duration: 0.3 }}
+              >
+                <feature.icon className="w-6 h-6 text-green-600" />
+              </motion.div>
+              <motion.h3
+                className="text-xl font-semibold text-gray-900 mb-2"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.2 + 0.1 * index }}
+                viewport={{ once: true }}
+              >
                 {feature.title}
-              </h3>
-              <p className="text-gray-600">
+              </motion.h3>
+              <motion.p
+                className="text-gray-600"
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                transition={{ duration: 0.4, delay: 0.3 + 0.1 * index }}
+                viewport={{ once: true }}
+              >
                 {feature.description}
-              </p>
-            </div>
+              </motion.p>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </Container>
-    </section>
+    </motion.section>
   );
 }
