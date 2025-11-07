@@ -1,10 +1,11 @@
-// pages/api/auth/otp/send.ts (or app/api/auth/otp/send/route.ts)
 import { NextResponse } from "next/server";
 import connectDb from "@/lib/db";
 import { sendMail } from "@/lib/mailer";
 import { generateOtp } from "@/lib/otp";
-const inMemoryLimits: Map<string, { count: number; resetAt: number }> =
-    new Map();
+import UserModel from "@/models/user.model";
+import { ROLES } from "@/constants/shakib/user.const";
+
+const inMemoryLimits: Map<string, { count: number; resetAt: number }> = new Map();
 const MAX_PER_HOUR = 5;
 
 function rateLimitKey(email: string, ip: string) {
@@ -25,10 +26,27 @@ export async function POST(req: Request) {
 
         const email = emailRaw.trim().toLowerCase();
         if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-            return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+            return NextResponse.json({ error: "Invalid email" }, { status: 400 });
         }
 
         await connectDb();
+
+        if (purpose === "forgot") {
+            const user = await UserModel.findOne({ email });
+            if (!user) {
+                return NextResponse.json(
+                    { error: "No account found with this email" },
+                    { status: 404 }
+                );
+            }
+
+            if (user.role !== ROLES.CITIZEN) {
+                return NextResponse.json(
+                    { error: "Only citizens can reset their password" },
+                    { status: 403 }
+                );
+            }
+        }
 
         const key = rateLimitKey(email, ip);
         const entry = inMemoryLimits.get(key) || {
