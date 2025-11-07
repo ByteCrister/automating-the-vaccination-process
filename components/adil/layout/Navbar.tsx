@@ -3,11 +3,14 @@
 import * as React from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { LuMenu, LuX, LuHouse, LuUserPlus, LuDownload, LuFileText, LuLogIn } from 'react-icons/lu';
+import { LuMenu, LuX, LuHouse, LuUserPlus, LuDownload, LuFileText, LuLogIn, LuLogOut } from 'react-icons/lu';
 import { Container } from '@/components/ui/adil/Container';
 import { Button } from '@/components/ui/adil/Button';
+import LogoutDialog from '@/components/ui/LogoutConfirmDialog';
 import { cn } from '@/lib/utils';
-import { signIn } from 'next-auth/react';
+import { signIn, signOut } from 'next-auth/react';
+import { useAuthStore } from '@/store/shakib/user-auth.store';
+import { useRouter } from 'next/navigation';
 
 interface NavbarProps {
   logo?: string;
@@ -62,6 +65,25 @@ export function Navbar({ logo = 'VaxEPI', navItems = [], ctaButton }: NavbarProp
   ];
 
   const navItemsToUse = navItems.length > 0 ? navItems : defaultNavItems;
+  const user = useAuthStore((s) => s.user);
+  const router = useRouter();
+
+
+  const [logoutDialogOpen, setLogoutDialogOpen] = React.useState(false);
+  const handleSignOut = async () => {
+    try {
+      await signOut({ redirect: false });
+    } catch (e) {
+      // ignore signOut errors
+    } finally {
+      useAuthStore.getState().clear();
+      router.push('/signin');
+    }
+  };
+
+  const handleSignIn = () => {
+    router.push('/signin');
+  };
 
   return (
     <motion.header
@@ -135,10 +157,35 @@ export function Navbar({ logo = 'VaxEPI', navItems = [], ctaButton }: NavbarProp
             {navItemsToUse.map((item) => {
               const IconComponent = item.icon;
               if (item.label === 'login') {
+                // If user is signed in, show logout instead of login
+                if (user) {
+                  return (
+                    <React.Fragment key={item.href}>
+                      <button
+                        onClick={() => setLogoutDialogOpen(true)}
+                        className={cn(
+                          'flex items-center gap-2 px-4 py-2 text-lg font-medium text-emerald-600 hover:text-white hover:bg-emerald-600 bg-emerald-50 rounded-md transition-colors',
+                          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500'
+                        )}
+                      >
+                        <LuLogOut className="w-4 h-4" />
+                        logout
+                      </button>
+                      <LogoutDialog
+                        open={logoutDialogOpen}
+                        onConfirm={() => {
+                          setLogoutDialogOpen(false);
+                          handleSignOut();
+                        }}
+                        onClose={() => setLogoutDialogOpen(false)}
+                      />
+                    </React.Fragment>
+                  );
+                }
                 return (
                   <button
                     key={item.href}
-                    onClick={() => signIn()}
+                    onClick={() => handleSignIn()}
                     className={cn(
                       'flex items-center gap-2 px-4 py-2 text-lg font-medium text-gray-700 hover:text-green-600 hover:bg-gray-50 rounded-md transition-colors',
                       'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500'
@@ -243,16 +290,38 @@ export function Navbar({ logo = 'VaxEPI', navItems = [], ctaButton }: NavbarProp
                       whileHover={{ scale: 1.05, x: 5 }}
                     >
                       {item.label === 'login' ? (
-                        <button
-                          onClick={() => {
-                            signIn();
-                            setIsMobileMenuOpen(false);
-                          }}
-                          className="flex items-center gap-3 px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-green-600 rounded-md transition-colors"
-                        >
-                          {IconComponent && <IconComponent className="w-5 h-5" />}
-                          {item.label}
-                        </button>
+                        // Mobile: show logout when user exists
+                        user ? (
+                          <>
+                            <button
+                              onClick={() => setLogoutDialogOpen(true)}
+                              className="flex items-center gap-3 px-4 py-3 text-base font-medium text-emerald-600 hover:text-white hover:bg-emerald-600 bg-emerald-50 rounded-md transition-colors"
+                            >
+                              <LuLogOut className="w-5 h-5" />
+                              logout
+                            </button>
+                            <LogoutDialog
+                              open={logoutDialogOpen}
+                              onConfirm={() => {
+                                setLogoutDialogOpen(false);
+                                setIsMobileMenuOpen(false);
+                                handleSignOut();
+                              }}
+                              onClose={() => setLogoutDialogOpen(false)}
+                            />
+                          </>
+                        ) : (
+                          <button
+                            onClick={() => {
+                              handleSignIn();
+                              setIsMobileMenuOpen(false);
+                            }}
+                            className="flex items-center gap-3 px-4 py-3 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-green-600 rounded-md transition-colors"
+                          >
+                            {IconComponent && <IconComponent className="w-5 h-5" />}
+                            {item.label}
+                          </button>
+                        )
                       ) : (
                         <Link
                           href={item.href}

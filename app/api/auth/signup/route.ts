@@ -2,7 +2,7 @@
 import { NextResponse } from "next/server";
 import connectDb from "@/lib/db";
 import UserModel from "@/models/user.model";
-import { verifyAndConsumeOtp } from "@/lib/otp";
+import { verifyOtp } from "@/lib/otp";
 import { ROLES } from "@/constants/shakib/user.const";
 
 // password policy util (example)
@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         await connectDb();
 
         // Verify OTP (model method consumes it on success)
-        const otpOk = await verifyAndConsumeOtp(email, "signup", otp);
+        const otpOk = await verifyOtp(email, "signup", otp);
         if (!otpOk) {
             // generic message to avoid leaking whether OTP existed
             return NextResponse.json({ error: "Invalid or expired OTP" }, { status: 400 });
