@@ -72,7 +72,7 @@ export const useAuthStore = create<Store>()(
       const promise = (async (): Promise<IUser | null> => {
         set({ loading: "loading", error: null });
         try {
-          const res = await api.get<{ user: IUser | null }>("/auth/user", {
+          const res = await api.get<{ user: IUser | null }>("/shakib/auth/user", {
             signal: controller.signal,
           });
 

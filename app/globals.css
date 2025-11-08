@@ -3,6 +3,13 @@
 /* Custom styles for landing page and dashboard */
 @layer base {
   html {
+    /* Enable smooth scrolling only when the html element opts in.
+       Next.js recommends adding data-scroll-behavior="smooth" to <html>
+       so it can temporarily disable smooth scrolling during route transitions. */
+    scroll-behavior: unset;
+  }
+
+  html[data-scroll-behavior="smooth"] {
     scroll-behavior: smooth;
   }
 

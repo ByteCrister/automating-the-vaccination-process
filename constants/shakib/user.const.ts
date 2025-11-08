@@ -2,6 +2,7 @@
 export const ROLES = {
   CITIZEN: 'citizen',
   CENTER: 'vaccination_center',
+  CENTER_STAFF: 'center_staff',
   AUTHORITY: 'authority',
 } as const;
 export type Role = (typeof ROLES)[keyof typeof ROLES];
